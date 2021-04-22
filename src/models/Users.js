@@ -1,26 +1,30 @@
 const { Model, DataTypes } = require('sequelize')
 
-class Companies extends Model {
+class Users extends Model {
   static init (sequelize) {
     super.init({
-      cnpj: {
+      first_name: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      name: {
+      last_name: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      description: {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      password: {
         type: DataTypes.STRING,
         allowNull: false
       }
     }, {
       sequelize,
-      modelName: 'Companies',
-      tableName: 'companies'
+      modelName: 'Users',
+      tableName: 'users'
     })
   }
 }
 
-module.exports = { Companies }
+module.exports = { Users }

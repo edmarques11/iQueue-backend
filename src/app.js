@@ -13,6 +13,6 @@ require('dotenv').config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
 })
 
-app.use(routes)
+app.use('/api', routes)
 
 module.exports = { app }

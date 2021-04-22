@@ -1,5 +1,5 @@
-const { Companies } = require('./Companies')
+const { Users } = require('./Users')
 
 module.exports = {
-  Companies
+  Users
 }
