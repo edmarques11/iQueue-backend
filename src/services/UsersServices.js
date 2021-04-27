@@ -18,6 +18,17 @@ class UsersServices {
       return error
     }
   }
+
+  async getAuth (email) {
+    try {
+      const user = await this.User.findOne({
+        where: { email }
+      })
+      return user
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
 }
 
 module.exports = { UsersServices }

@@ -1,8 +1,16 @@
 const { Users } = require('../models')
 const { UsersServices } = require('../services')
+const authConfig = require('../config/auth.json')
+const jwt = require('jsonwebtoken')
 const yup = require('yup')
 
 const userssServices = new UsersServices(Users)
+
+function generateToken (params = {}) {
+  return jwt.sign(params, authConfig.secret, {
+    expiresIn: 86400
+  })
+}
 
 module.exports = {
   async save (request, response) {
@@ -34,7 +42,7 @@ module.exports = {
     if (user.error) {
       return response.status(400).json(user.error)
     } else {
-      return response.status(201).json(user)
+      return response.status(201).send({ user, token: generateToken({ id: user.id }) })
     }
   }
 }
