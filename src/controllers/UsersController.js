@@ -8,7 +8,7 @@ const userssServices = new UsersServices(Users)
 
 function generateToken (params = {}) {
   return jwt.sign(params, authConfig.secret, {
-    expiresIn: 86400
+    expiresIn: '1h'
   })
 }
 
@@ -27,7 +27,7 @@ module.exports = {
       schema.validate(request.body, { abortEarly: false })
     } catch (error) {
       console.error(error)
-      response.status(400).json(error)
+      response.status(400).json(error.message)
     }
 
     const dataUser = {
@@ -37,12 +37,11 @@ module.exports = {
       password
     }
 
-    const user = await userssServices.create(dataUser.first_name, dataUser.last_name, dataUser.email, dataUser.password)
-
-    if (user.error) {
-      return response.status(400).json(user.error)
-    } else {
+    try {
+      const user = await userssServices.create(dataUser.first_name, dataUser.last_name, dataUser.email, dataUser.password)
       return response.status(201).send({ user, token: generateToken({ id: user.id }) })
+    } catch (error) {
+      return response.status(400).json(error.message)
     }
   }
 }

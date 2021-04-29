@@ -15,17 +15,6 @@ class UsersServices {
       return await this.User.create(dataUser)
     } catch (error) {
       console.error('at UsersServices', error)
-      return error
-    }
-  }
-
-  async getAuth (email) {
-    try {
-      const user = await this.User.findOne({
-        where: { email }
-      })
-      return user
-    } catch (error) {
       throw new Error(error)
     }
   }

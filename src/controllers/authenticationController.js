@@ -1,40 +1,15 @@
 const { Users } = require('../models')
-const { UsersServices } = require('../services')
-const jwt = require('jsonwebtoken')
-const authConfig = require('../config/auth.json')
+const { AuthServices } = require('../services/AuthServices')
 
-const userssServices = new UsersServices(Users)
-
-function generateToken (params = {}) {
-  return jwt.sign(params, authConfig.secret, {
-    expiresIn: 86400
-  })
-}
-
+const authServices = new AuthServices(Users)
 module.exports = {
-  async auth (request, response) {
-    const { email, password } = request.body
-
-    let user
+  async login (request, response) {
     try {
-      user = await userssServices.getAuth(email)
-    } catch (error) {
-      return response.status(400).json({ message: error.message })
+      const { email, password } = request.body
+      const { token, userData } = await authServices.login(email, password)
+      response.status(201).json({ auth: true, user: userData, token: token })
+    } catch (err) {
+      response.status(401).send({ auth: false, token: null, message: err.message })
     }
-
-    if (!user) {
-      return response.status(400).json({ message: 'Invalid email!' })
-    }
-
-    if (password !== await user.password) {
-      return response.status(400).json({ message: 'Invalid password!' })
-    }
-
-    user.password = undefined
-
-    return response.status(200).send({
-      user,
-      token: generateToken({ id: user.id })
-    })
   }
 }

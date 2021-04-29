@@ -3,6 +3,6 @@ const authenticationController = require('../controllers/authenticationControlle
 
 const routes = Router()
 
-routes.post('/auth', authenticationController.auth)
+routes.post('/users/login', authenticationController.login)
 
 module.exports = routes
