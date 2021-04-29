@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth.json')
+const bcrypt = require('bcrypt')
 
 class AuthServices {
   constructor (user) {
@@ -7,7 +8,9 @@ class AuthServices {
   }
 
   generateToken (user) {
-    const token = jwt.sign({ id: user.id }, authConfig.secret, { expiresIn: '1h' })
+    const token = jwt.sign({ id: user.id }, authConfig.secret, {
+      expiresIn: '1h'
+    })
     return token
   }
 
@@ -22,13 +25,13 @@ class AuthServices {
       throw new Error('Invalid Email or Password!')
     }
 
-    const passwordIsValid = password === user.password
+    const passwordIsValid = bcrypt.compareSync(password, user.password)
     if (!passwordIsValid) {
       throw new Error('Invalid Email or Password!')
     }
     const token = this.generateToken(user.id)
-    const { name } = user
-    return { token, userData: { name, email } }
+    const { id, first_name } = user
+    return { token, userData: { id, first_name, email } }
   }
 }
 

@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt')
+const SALT = 8
+
 class UsersServices {
   constructor (User) {
     this.User = User
@@ -8,7 +11,7 @@ class UsersServices {
       first_name: firstName,
       last_name: lastName,
       email,
-      password
+      password: bcrypt.hashSync(password, SALT)
     }
 
     try {

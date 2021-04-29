@@ -1,16 +1,11 @@
 const { Users } = require('../models')
 const { UsersServices } = require('../services')
-const authConfig = require('../config/auth.json')
-const jwt = require('jsonwebtoken')
 const yup = require('yup')
+const { AuthServices } = require('../services')
+
+const authServices = new AuthServices(Users)
 
 const userssServices = new UsersServices(Users)
-
-function generateToken (params = {}) {
-  return jwt.sign(params, authConfig.secret, {
-    expiresIn: '1h'
-  })
-}
 
 module.exports = {
   async save (request, response) {
@@ -21,13 +16,14 @@ module.exports = {
       lastName: yup.string().required(),
       email: yup.string().email().required(),
       password: yup.string().required()
+        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/)
     })
 
     try {
-      schema.validate(request.body, { abortEarly: false })
+      await schema.validate(request.body, { abortEarly: false })
     } catch (error) {
       console.error(error)
-      response.status(400).json(error.message)
+      return response.status(400).json(error.message)
     }
 
     const dataUser = {
@@ -39,7 +35,8 @@ module.exports = {
 
     try {
       const user = await userssServices.create(dataUser.first_name, dataUser.last_name, dataUser.email, dataUser.password)
-      return response.status(201).send({ user, token: generateToken({ id: user.id }) })
+      user.password = undefined
+      return response.status(201).send({ user, token: authServices.generateToken(user.id) })
     } catch (error) {
       return response.status(400).json(error.message)
     }
