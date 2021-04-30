@@ -1,3 +1,8 @@
+// Config dotenv
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
+})
+
 const express = require('express')
 const cors = require('cors')
 const routes = require('./routes')
@@ -12,11 +17,6 @@ app.use(cors({
   methods: 'GET,PUT,POST,OPTIONS, DELETE',
   allowedHeaders: 'Accept, Content-Type, Authorization'
 }))
-
-// Config dotenv
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env'
-})
 
 app.all('/api/*', (request, response, next) => {
   const publicRoutes = process.env.PUBLIC_ROUTES
